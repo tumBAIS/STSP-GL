@@ -2,7 +2,7 @@
 
 ## Description
 
-The goal of this software is to determine the solution of a stochastic traveling salesman problem with generalized latency. A preprint of this paper is available on [arXiv](https://arxiv.org/abs/2210.09190).
+The goal of this software is to determine the solution of a stochastic traveling salesman problem with generalized latency. A preprint of this paper is available on [arXiv](https://arxiv.org/abs/2311.09923).
 
 This software contains four folders: `data`, `generators`, `results`, `solver`. 
 - `data`: contains data for the case study of our paper.
