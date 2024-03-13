@@ -221,4 +221,4 @@ if __name__ == "__main__":
 
 
 
-# run this code via "python .\run_advanced_branch.py 21 5 0 0.95 0.05 0.25 CG all False"
+# run this code via "python .\run_algorithms.py 21 5 0 0.95 0.05 0.25 CG all False"
