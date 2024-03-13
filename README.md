@@ -18,7 +18,7 @@ Ubuntu 20.04.
 
 
 ## Replicating
-To replicate the results of an instance of our case study run `python ./start_run.py [dimension] [scenarios] [seed] [theta] [rho] [alpha] [run_option] [arcs] [value_of_stochastic_solution]`.
+To replicate the results of an instance of our case study run `python ./run_algorithms.py [dimension] [scenarios] [seed] [theta] [rho] [alpha] [run_option] [arcs] [value_of_stochastic_solution]`.
 The following input arguments are valid:
 
 | Argument | Inputs |
