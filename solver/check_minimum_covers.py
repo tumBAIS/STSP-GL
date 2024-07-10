@@ -43,8 +43,6 @@ def is_minimum_node_cover(demand: dict, cover: frozenset, theta: float, rho: flo
         return False, None, None
 
     # check if any subset of the original cover is still a feasible cover
-    # for req in cover:
-    # subset = cover - {req}
     for i in range(len(nodes)):
         subset = remove_nodes_from_cover(cover, [nodes[i]])
 
