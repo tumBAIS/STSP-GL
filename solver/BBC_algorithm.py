@@ -53,29 +53,6 @@ class AlgorithmBBC1:
         # Determine undirected edges in subnetwork
         self.relevant_edges = set(frozenset(arc) for arc in self.relevant_arcs)
 
-        # Determine q in subproblem
-        # self.q = dict()
-        # for req in self.cover:
-        #     self.q[req] = dict()
-        #     for arc in self.relevant_arcs:
-        #         self.q[req][arc] = self.network.edges[arc]['cost'] / len(self.demand) * \
-        #                            sum(self.demand[n].get(req, 0) /
-        #                                (self.theta * sum(self.demand[n].values())) for n in self.demand)
-
-        # # Determine q in subproblem (done only once for all in algorithm)
-        # self.q = dict()
-        # temp_demand_sum = {n: sum(self.demand[n].values()) for n in self.demand} #needed for runtime (~80% reduction)
-        #
-        # for req in self.cover:
-        #     self.q[req] = {arc: 0 for arc in self.relevant_arcs}
-        #     for arc in self.relevant_arcs:
-        #         for n in self.demand:
-        #             try:
-        #                 self.q[req][arc] += self.network.edges[arc]['cost'] / len(self.demand) * \
-        #                                    self.demand[n][req] / (self.theta * temp_demand_sum[n])
-        #             except KeyError:
-        #                 continue
-
         return
 
     def setup_master_BBC1(self):
@@ -170,7 +147,6 @@ class AlgorithmBBC1:
         bound = 0
 
         for h, k in self.cover:
-            # print(f'Solve dual subproblem for {h, k}')
 
             # Store the subproblems in a dict (Idea: only update objective function)
             if (h, k) not in self.dual_problems:
@@ -240,7 +216,6 @@ def run_BBC1(demand: dict, cover: frozenset, graph, alpha: float, theta: float, 
     alg = AlgorithmBBC1(demand, cover, graph, alpha, theta, q)
     alg.get_relevant_elements()
     alg.setup_master_BBC1()
-    # alg.initialize_h2()
     alg.initialize_with_edges(edges, lower_bound)
 
     while True:
@@ -248,18 +223,12 @@ def run_BBC1(demand: dict, cover: frozenset, graph, alpha: float, theta: float, 
         cut_type, a, b, bound = alg.solve_dual_subproblems()
 
         if cut_type == 'feasibility_cut':
-            # print(f'feasibility cut after {time.time() - t}')
             alg.add_feasibility_cut(a, b[0], b[1])
 
         elif cut_type == 'optimality_cut':
-            # print(f'optimality cut after {time.time() - t}')
             alg.add_optimality_cut(a, b)
 
             alg.upper_bounds.append(bound + alg.lower_bounds[-1])
-
-        # import helper.plot_graph as plt
-        #
-        # plt.plot_route_graph(alg.network, alg.x)
 
         if min(alg.upper_bounds) - max(alg.lower_bounds[1:], default=0) < error:
             break
@@ -279,7 +248,6 @@ def run_BBC2(demand: dict, cover: frozenset, graph, alpha: float, theta: float, 
     alg = AlgorithmBBC1(demand, cover, graph, alpha, theta, q, reachable_arcs)
     alg.get_relevant_elements()
     alg.setup_master_BBC2()
-    # alg.initialize_h2()
     alg.initialize_with_edges(edges, lower_bound)
     alg.add_feasibility_cut_subtour(subtours)
 
@@ -294,36 +262,27 @@ def run_BBC2(demand: dict, cover: frozenset, graph, alpha: float, theta: float, 
         if n > 1:
             used_edges = gp.tuplelist(edge for edge, val in alg.master.x.items() if val.X > 0.999)
             subtours = tsp.subtour(used_edges, alg.relevant_nodes)
-            # print(f'Add calculated subtours in {time.time() - t}')
+
         if n > 1 and len(subtours) > 1:
             t = time.time()
             alg.add_feasibility_cut_subtour(subtours)
-            # print(f'Added feaibility cut in {time.time() - t}')
 
         #################### OPTIMALITY CUTS ################################
         else:
-            # print('Solve subproblems...')
             t = time.time()
             cut_type, rhs, lhs, bound = alg.solve_dual_subproblems_o3()
-            # print(f'Solved subproblems in {time.time() - t}')
 
             if cut_type != 'optimality_cut':
                 raise AssertionError
             t = time.time()
             alg.add_optimality_cut_o3(rhs, lhs)
-            # print(f'Add optimality cut in {time.time() - t}')
             alg.upper_bounds.append(bound + alg.lower_bounds[-1])
-
-            # import helper.plot_graph as plt
-            #
-            # plt.plot_route_graph(alg.network, alg.x)
 
             if min(alg.upper_bounds) - max(alg.lower_bounds[1:], default=0) < error:
                 break
 
         t = time.time()
         alg.solve_master()
-        # print(f'Solved master in {time.time() - t}')
 
         if alg.same_solution_x:
             break
