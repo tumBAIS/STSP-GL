@@ -143,13 +143,6 @@ class Model:
         self.node_constr_origin = {h: m.addConstr(self.w[h] - self.z[(h, k)] >= 0) for (h, k) in self.D}
         self.node_contr_dest = {k: m.addConstr(self.w[k] - self.z[(h, k)] >= 0) for (h, k) in self.D}
 
-        # # Add objective function
-        # obj = (1 - self.alpha) * gp.quicksum(2 * self.network.edges[edge]['cost'] * self.x[edge] for edge in edges) + \
-        #       self.alpha * 1 / len(self.demand) * \
-        #       gp.quicksum(self.demand[n].get(req, 0) / (self.theta * sum(self.demand[n].values())) *
-        #                   self.f[(edge, req)] * self.network.edges[edge]['cost']
-        #                   for edge in self.network.edges() for n in self.demand for req in self.demand[n] if edge in self.reachable_arcs[req])
-        # m.setObjective(obj, GRB.MINIMIZE)
         self.m = m
         return
 
@@ -172,17 +165,6 @@ class Model:
         with open(filename, 'w') as f:
             writer = csv.writer(f)
             writer.writerows(self.m._data)
-        # self.m.write("ip-model.lp")
-        # self.find_subtours()
-        #
-        # while len(self.subtours) > 1:
-        #     self.it_subtours += 1
-        #     self.add_subtour_elimination()
-        #     self.m.optimize()
-        #     self.find_subtours()
-
-        # self.m.computeIIS()
-        # self.m.write("model.ilp")
         return
 
     def find_subtours(self):
