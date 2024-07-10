@@ -53,7 +53,6 @@ class ModelCoversRMP:
         self.cover_constr = None
         self.service_flow = None
         self.service_out = None
-        # self.passenger_flow = None
         self.passenger_flow_bound = None
         self.flow_passengers = None
 
